@@ -36,7 +36,6 @@ describe('AppController', () => {
 
   describe('WebSocketGateway (WsAdapter)', () => {
     let ws, app;
-
     it(`should emit and on message`, async () => {
       app = await createNestApp(ChatGateway);
 
