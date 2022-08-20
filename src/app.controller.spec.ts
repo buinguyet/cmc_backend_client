@@ -41,23 +41,16 @@ describe('AppController', () => {
 
       ws = new WebSocket('ws://localhost:8000');
 
-      const dataForEmit = [
-        {
-          label: 'Blue',
-          value: 1,
-          color: 'blue',
-        },
-        {
-          label: 'Orange',
-          value: 3,
-          color: 'orange',
-        },
-      ];
+      const dataForEmit = {
+        label: 'Blue',
+        value: 0,
+        color: 'blue',
+      };
 
       ws.emit(dataForEmit);
 
-      ws.on('count', (data: ColorData[]) => {
-        expect(data[0].label).toBe('Blue');
+      ws.on('count', (data: ColorData) => {
+        expect(data.value).toBe(1);
         ws.close();
       });
     });

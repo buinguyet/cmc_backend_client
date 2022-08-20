@@ -13,7 +13,7 @@ export class ChatGateway {
   @WebSocketServer() server: Server;
 
   @SubscribeMessage('count')
-  handleMessage(@MessageBody() data: ColorData): void {
+  handleMessage(@MessageBody() data: ColorData | ColorData[]): void {
     this.server.emit('count', data);
   }
 }
