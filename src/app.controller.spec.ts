@@ -6,6 +6,7 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import { ChatGateway } from './chat.gateway';
 import { ColorData } from './color.dto';
 import { getClientWebsocket } from './ws-client.helper';
+import { INITIAL_DATA } from './constant';
 
 async function createNestApp(...gateways): Promise<INestApplication> {
   const testingModule = await Test.createTestingModule({
@@ -38,21 +39,9 @@ describe('AppController', () => {
     let app;
     const socket = getClientWebsocket();
 
-    it(`should emit and on message with arry data`, async () => {
+    it(`should emit and on message with array data`, async () => {
       app = await createNestApp(ChatGateway);
-      const arrayDataForEmit = [
-        {
-          label: 'Blue',
-          value: 0,
-          color: 'hsl(195, 74%, 62%)',
-        },
-        {
-          label: 'Orange',
-          value: 0,
-          color: 'hsl(15, 100%, 70%)',
-        },
-      ];
-      socket.emit('count', arrayDataForEmit);
+      socket.emit('count', INITIAL_DATA);
 
       socket.on('count', (dataServer: ColorData[]) => {
         expect(dataServer[0].value).toBe(0);
