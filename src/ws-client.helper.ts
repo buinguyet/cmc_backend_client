@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import * as io from 'socket.io-client';
+require('dotenv').config();
 
 export const getClientWebsocket = () => {
-  return io.connect('http://localhost:8000');
+  const PORT = process.env.PORT;
+  return io.connect(`http://localhost:${PORT}`);
 };
