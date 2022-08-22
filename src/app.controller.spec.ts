@@ -45,17 +45,15 @@ describe('AppController', () => {
 
       socket.on('count', (dataServer: ColorData[]) => {
         expect(dataServer[0].value).toBe(0);
+
         socket.disconnect();
       });
     });
 
     it(`should emit and on message with single data`, async () => {
       app = await createNestApp(ChatGateway);
-      const dataForEmit = {
-        label: 'Blue',
-        value: 0,
-        color: 'hsl(195, 74%, 62%)',
-      };
+
+      const dataForEmit = INITIAL_DATA[0];
       socket.emit('count', dataForEmit);
 
       socket.on('count', (data: ColorData[]) => {
@@ -64,6 +62,7 @@ describe('AppController', () => {
         );
 
         expect(findDataEmit.value).toBe(findDataEmit.value);
+
         socket.disconnect();
       });
     });
