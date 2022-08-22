@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { WsAdapter } from '@nestjs/platform-ws';
 import { ChatGateway } from './chat.gateway';
 import { ColorData } from './color.dto';
-import * as WebSocket from 'ws';
+import { getClientWebsocket } from './ws-client.helper';
 
 async function createNestApp(...gateways): Promise<INestApplication> {
   const testingModule = await Test.createTestingModule({
@@ -35,23 +35,47 @@ describe('AppController', () => {
   });
 
   describe('WebSocketGateway (WsAdapter)', () => {
-    let ws, app;
-    it(`should emit and on message`, async () => {
+    let app;
+    const socket = getClientWebsocket();
+
+    it(`should emit and on message with arry data`, async () => {
       app = await createNestApp(ChatGateway);
+      const arrayDataForEmit = [
+        {
+          label: 'Blue',
+          value: 0,
+          color: 'hsl(195, 74%, 62%)',
+        },
+        {
+          label: 'Orange',
+          value: 0,
+          color: 'hsl(15, 100%, 70%)',
+        },
+      ];
+      socket.emit('count', arrayDataForEmit);
 
-      ws = new WebSocket('ws://localhost:8000');
+      socket.on('count', (dataServer: ColorData[]) => {
+        expect(dataServer[0].value).toBe(0);
+        socket.disconnect();
+      });
+    });
 
+    it(`should emit and on message with single data`, async () => {
+      app = await createNestApp(ChatGateway);
       const dataForEmit = {
         label: 'Blue',
         value: 0,
-        color: 'blue',
+        color: 'hsl(195, 74%, 62%)',
       };
+      socket.emit('count', dataForEmit);
 
-      ws.emit(dataForEmit);
+      socket.on('count', (data: ColorData[]) => {
+        const findDataEmit = data.find(
+          (item: ColorData) => item.label === dataForEmit.label,
+        );
 
-      ws.on('count', (data: ColorData) => {
-        expect(data.value).toBe(1);
-        ws.close();
+        expect(findDataEmit.value).toBe(findDataEmit.value);
+        socket.disconnect();
       });
     });
   });
